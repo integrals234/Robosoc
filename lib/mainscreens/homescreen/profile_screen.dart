@@ -174,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (role.toLowerCase() == 'administrator') {
         final user = _auth.currentUser;
         if (user != null) {
-          final canChangeToAdmin = await RoleManager.canChangeRole(
+          final canChangeToAdmin = await RoleManager.canChangeRoleAdm(
             user.email!,
             role,
           );
@@ -183,7 +183,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('You are not authorized to become an administrator'),
+                  content:
+                      Text('You are not authorized to become an administrator'),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -267,9 +268,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               IconButton(
                                 icon: Icon(
-                                  _isEditing ? Icons.close : Icons.edit,
-                                  color: _isEditing ? Colors.red : Colors.black
-                                ),
+                                    _isEditing ? Icons.close : Icons.edit,
+                                    color:
+                                        _isEditing ? Colors.red : Colors.black),
                                 onPressed: () {
                                   setState(() {
                                     _isEditing = !_isEditing;
@@ -282,7 +283,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               const NotificationBadge(),
                               IconButton(
-                                icon: const Icon(Icons.logout, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.logout, color: Colors.red),
                                 onPressed: _logout,
                               ),
                             ],
@@ -290,7 +292,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Column(
@@ -333,7 +334,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-
                     _isEditing
                         ? const SizedBox()
                         : Padding(
@@ -358,7 +358,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   )
                                 : Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text(
                                         'Issued Components',
@@ -372,14 +373,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ...List.generate(
                                         _issuedComponents.length,
                                         (index) => Padding(
-                                          padding: const EdgeInsets.only(bottom: 10),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
                                           child: IssuedComponentHistoryCard(
                                             component: _issuedComponents[index],
-                                            issueDate: _issuedComponents[index].issueDate,
-                                            returnDate: _issuedComponents[index].returnDate,
-                                            approvedBy: _issuedComponents[index].approvedBy,
-                                            imageUrl: _issuedComponents[index].imageUrl,
-                                            quantity: _issuedComponents[index].quantity,
+                                            issueDate: _issuedComponents[index]
+                                                .issueDate,
+                                            returnDate: _issuedComponents[index]
+                                                .returnDate,
+                                            approvedBy: _issuedComponents[index]
+                                                .approvedBy,
+                                            imageUrl: _issuedComponents[index]
+                                                .imageUrl,
+                                            quantity: _issuedComponents[index]
+                                                .quantity,
                                           ),
                                         ),
                                       )

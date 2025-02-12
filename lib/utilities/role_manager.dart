@@ -12,15 +12,23 @@ class RoleManager {
     return role.toLowerCase() == 'administrator';
   }
 
-  static Future<bool> canChangeRole(String email, String newRole) async {
+  static bool isCoordinator(String role) {
+    return role.toLowerCase() == 'coordinator';
+  }
+
+  static bool isExecutive(String role) {
+    return role.toLowerCase() == 'executive';
+  }
+
+  static Future<bool> canChangeRoleAdm(String email, String newRole) async {
     if (newRole.toLowerCase() != 'administrator') return true;
-    
+
     try {
       final QuerySnapshot result = await FirebaseFirestore.instance
           .collection('admin_emails')
           .where('email', isEqualTo: email)
           .get();
-      
+
       return result.docs.isNotEmpty;
     } catch (e) {
       print('Error verifying admin email: $e');

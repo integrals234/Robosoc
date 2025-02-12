@@ -35,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           .collection('admin_emails')
           .where('email', isEqualTo: email)
           .get();
-      
+
       return result.docs.isNotEmpty;
     } catch (e) {
       print('Error verifying admin email: $e');
@@ -54,7 +54,160 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: TextStyle(fontFamily: "NexaBold"),
           ),
           content: const Text(
-            'You are not registered as an administrator.',
+            'You are not registered as an Administrator.',
+            style: TextStyle(fontFamily: "NexaRegular"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  fontFamily: "NexaBold",
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> _verifyCoordinatorEmail(String email) async {
+    try {
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('coordinator_emails')
+          .where('email', isEqualTo: email)
+          .get();
+
+      return result.docs.isNotEmpty;
+    } catch (e) {
+      print('Error verifying Co-ordinator email: $e');
+      return false;
+    }
+  }
+
+  void _showCoordinatorErrorDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Access Denied',
+            style: TextStyle(fontFamily: "NexaBold"),
+          ),
+          content: const Text(
+            'You are not registered as a Co-ordinator.',
+            style: TextStyle(fontFamily: "NexaRegular"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  fontFamily: "NexaBold",
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> _verifyExecutiveEmail(String email) async {
+    try {
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('executive_emails')
+          .where('email', isEqualTo: email)
+          .get();
+
+      return result.docs.isNotEmpty;
+    } catch (e) {
+      print('Error verifying executive email: $e');
+      return false;
+    }
+  }
+
+  void _showExecutiveErrorDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Access Denied',
+            style: TextStyle(fontFamily: "NexaBold"),
+          ),
+          content: const Text(
+            'You are not registered as an Executive.',
+            style: TextStyle(fontFamily: "NexaRegular"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  fontFamily: "NexaBold",
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> _verifyVolunteerEmail(String email) async {
+    try {
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('volunteer_emails')
+          .where('email', isEqualTo: email)
+          .get();
+
+      return result.docs.isNotEmpty;
+    } catch (e) {
+      print('Error verifying volunteer email: $e');
+      return false;
+    }
+  }
+
+  void _showVolunteerErrorDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Access Denied',
+            style: TextStyle(fontFamily: "NexaBold"),
+          ),
+          content: const Text(
+            'You are not registered as an Volunteer.',
             style: TextStyle(fontFamily: "NexaRegular"),
           ),
           actions: [
@@ -97,7 +250,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               return;
             }
           }
-
+          // Check if selected role is Co-ordinator
+          if (_selectedRole == 'Co-ordinator') {
+            // Verify if the email is in coordinator_emails collection
+            bool isCoordinator =
+                await _verifyCoordinatorEmail(user.email ?? '');
+            if (!isCoordinator) {
+              setState(() => _isLoading = false);
+              _showCoordinatorErrorDialog();
+              return;
+            }
+          }
+          // Check if selected role is Executive
+          if (_selectedRole == 'Executive') {
+            // Verify if the email is in executive_emails collection
+            bool isExecutive = await _verifyExecutiveEmail(user.email ?? '');
+            if (!isExecutive) {
+              setState(() => _isLoading = false);
+              _showExecutiveErrorDialog();
+              return;
+            }
+          }
+          // Check if selected role is Volunteer
+          if (_selectedRole == 'Volunteer') {
+            // Verify if the email is in executive_emails collection
+            bool isVolunteer = await _verifyVolunteerEmail(user.email ?? '');
+            if (!isVolunteer) {
+              setState(() => _isLoading = false);
+              _showVolunteerErrorDialog();
+              return;
+            }
+          }
           // If not administrator or verification passed, proceed with profile creation
           await FirebaseFirestore.instance
               .collection('profiles')
@@ -143,16 +326,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     double sw = MediaQuery.of(context).size.width;
     double sh = MediaQuery.of(context).size.height;
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: sw * 0.064, 
-              vertical: sh * 0.043
-            ),
+                horizontal: sw * 0.064, vertical: sh * 0.043),
             child: Form(
               key: _formKey,
               child: Column(

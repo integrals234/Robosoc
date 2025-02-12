@@ -57,9 +57,7 @@ class RobosocApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ComponentProvider()),
         ChangeNotifierProvider(create: (context) => ProjectProvider()),
         ChangeNotifierProvider(create: (context) => UserProfileProvider()),
-        
         ChangeNotifierProvider(create: (context) => NotificationProvider()),
-
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -78,7 +76,7 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           User? user = snapshot.data;
-          
+
           if (user != null) {
             return NavigationScreen();
           } else {
